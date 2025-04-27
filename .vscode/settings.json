@@ -1,0 +1,25 @@
+{
+  "sqltools.connections": [
+    {
+      "server": "localhost",
+      "port": 3306,
+      "database": "your_database",
+      "username": "root",
+      "password": "your_password",
+      "driver": "MySQL"
+    },
+    {
+      "mysqlOptions": {
+        "authProtocol": "default",
+        "enableSsl": "Disabled"
+      },
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 3306,
+      "driver": "MySQL",
+      "name": "full data base",
+      "database": "fullSystem",
+      "username": "root"
+    }
+  ]
+}
