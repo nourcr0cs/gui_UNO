@@ -1,13 +1,11 @@
-package components;
+package components.buttons;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-/**
- * Custom button component for the UNO game start screen
- */
+
 public class StartButton extends JLabel {
     
     private final Color normalColor = Color.WHITE;

@@ -42,14 +42,13 @@ public class GameFlowIndicator extends JPanel {
         repaint();
     }
     
-    /**
-     * Returns the current direction of the arrow
-     * @return true if clockwise, false if counter-clockwise
-     */
     public boolean isClockwise() {
         return clockwise;
     }
     
+
+
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -59,15 +58,12 @@ public class GameFlowIndicator extends JPanel {
         int width = getWidth();
         int height = getHeight();
         
-        // set arrow style
         g2d.setColor(arrowColor);
         g2d.setStroke(new BasicStroke(thickness, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         
-        // draw the curved shaft
         Path2D.Double arrowPath = new Path2D.Double();
         
         if (clockwise) {
-            // Original clockwise direction (top-left to bottom-right curve)
             int startX = width / 4;
             int startY = 3 * height / 4;
             int endX   = 3 * width / 4;
@@ -79,12 +75,11 @@ public class GameFlowIndicator extends JPanel {
             arrowPath.quadTo(controlX, controlY, endX, endY);
             g2d.draw(arrowPath);
             
-            // smooth caps at both ends
             int capSize = thickness;
             g2d.fillOval(startX - capSize/2, startY - capSize/2, capSize, capSize);
             g2d.fillOval(endX   - capSize/2, endY   - capSize/2, capSize, capSize);
             
-            // draw arrow head
+            //arrow head
             int arrowSize = thickness * 3;
             double dx = endX - controlX;
             double dy = endY - controlY;
@@ -97,6 +92,7 @@ public class GameFlowIndicator extends JPanel {
             g2d.drawLine(endX, endY, x1, y1);
             g2d.drawLine(endX, endY, x2, y2);
         } else {
+            //change direction
             int startX = 3 * width / 4;
             int startY = 3 * height / 4;
             int endX   = width / 4;
@@ -108,12 +104,11 @@ public class GameFlowIndicator extends JPanel {
             arrowPath.quadTo(controlX, controlY, endX, endY);
             g2d.draw(arrowPath);
             
-            // smooth caps at both ends
             int capSize = thickness;
             g2d.fillOval(startX - capSize/2, startY - capSize/2, capSize, capSize);
             g2d.fillOval(endX   - capSize/2, endY   - capSize/2, capSize, capSize);
             
-            // draw arrow head
+            //arrow head
             int arrowSize = thickness * 3;
             double dx = endX - controlX;
             double dy = endY - controlY;
