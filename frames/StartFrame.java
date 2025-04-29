@@ -1,121 +1,123 @@
 package frames;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.net.URL;
-import components.AnimatedUnoLabel;
+
 import components.buttons.StartButton;
+import components.labels.AnimatedUnoLogo;
 
 public class StartFrame extends JFrame {
     private Image backgroundImage;
+    private AnimatedUnoLogo unoLogo;
+    private StartButton startButton;
+    
+    private static final int LOGO_WIDTH = 400; 
+    private static final int LOGO_HEIGHT = 200;
+    private static final int BUTTON_WIDTH = 450;
+    private static final int BUTTON_HEIGHT = 80;
+    
     
     public StartFrame() {
-        // Set up the frame
         setTitle("UNO Game");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
-        setLocationRelativeTo(null); // Center the window
-        setResizable(true); // Prevent resizing to maintain design integrity
+        setLocationRelativeTo(null); 
+        setResizable(true);
         
-        // Load the background image
         try {
-            // You'll need to replace this with the path to your image
-            URL imageUrl = getClass().getResource("uno_background.jpg");
+            URL imageUrl = getClass().getResource("/frames/uno_background.jpg");
+            if (imageUrl == null) {
+                imageUrl = getClass().getResource("uno_background.jpg");
+            }
+            if (imageUrl == null) {
+                imageUrl = getClass().getResource("/uno_background.jpg");
+            }
+            
             if (imageUrl != null) {
                 backgroundImage = new ImageIcon(imageUrl).getImage();
+                System.out.println("Successfully loaded background image from: " + imageUrl);
             } else {
-                System.err.println("Could not find background image");
+                System.err.println("Could not find background image. Make sure uno_background.jpg exists in the correct location.");
             }
         } catch (Exception e) {
             System.err.println("Error loading background image: " + e.getMessage());
             e.printStackTrace();
         }
         
-        // Create a custom panel with the background image
         JPanel backgroundPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 if (backgroundImage != null) {
-                    // Draw the background image to fill the entire panel
                     g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
                 } else {
-                    // Fallback to a teal color similar to the image if image loading fails
-                    g.setColor(new Color(23, 107, 115));
-                    g.fillRect(0, 0, getWidth(), getHeight());
+                    Graphics2D g2d = (Graphics2D) g;
+                    GradientPaint gradient = new GradientPaint(
+                        0, 0, new Color(23, 107, 135), 
+                        getWidth(), getHeight(), new Color(0, 45, 60)
+                    );
+                    g2d.setPaint(gradient);
+                    g2d.fillRect(0, 0, getWidth(), getHeight());
                 }
             }
         };
         
         backgroundPanel.setLayout(null);
         
-        // Create animated UNO logo label
-        AnimatedUnoLabel unoTitleLabel = new AnimatedUnoLabel();
-        unoTitleLabel.setBounds(250, 80, 300, 120);
-        // Start the animation
-        unoTitleLabel.startAnimation();
-        backgroundPanel.add(unoTitleLabel);
+        unoLogo = new AnimatedUnoLogo();
+        backgroundPanel.add(unoLogo);
         
-        // Create our new StartButton component
-        StartButton startButton = new StartButton("let's get started", new StartButton.StartButtonListener() {
+        unoLogo.startAnimation();
+        
+        startButton = new StartButton("Let's Get Started", new StartButton.StartButtonListener() {
             @Override
             public void onButtonClicked() {
+                System.out.println("Start button clicked!");
+            }
+        });
+        backgroundPanel.add(startButton);
+        
+        setContentPane(backgroundPanel);
+        
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                repositionComponents();
             }
         });
         
-        // Position the button to match the image
-        startButton.setBounds(175, 220, 450, 80);
-        backgroundPanel.add(startButton);
-        
-        // Set the background panel as the content pane
-        setContentPane(backgroundPanel);
+        repositionComponents();
     }
-    
-    /**
-     * Creates a styled JLabel with optional shadow effect
-     */
-    private JLabel createStyledLabel(String text, Font font, Color foreground, Color shadowColor, int shadowOffset) {
-        JLabel label = new JLabel(text, SwingConstants.CENTER) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2d = (Graphics2D) g.create();
-                g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-                
-                // Draw shadow if needed
-                if (shadowColor != null && shadowOffset > 0) {
-                    g2d.setFont(getFont());
-                    g2d.setColor(shadowColor);
-                    g2d.drawString(getText(), shadowOffset, getFont().getSize() + shadowOffset);
-                }
-                
-                // Draw the main text
-                g2d.setColor(getForeground());
-                g2d.setFont(getFont());
-                g2d.drawString(getText(), 0, getFont().getSize());
-                
-                g2d.dispose();
-            }
-        };
-        
-        label.setFont(font);
-        label.setForeground(foreground);
-        
-        return label;
-    }
-    
    
-    
-    
+    private void repositionComponents() {
+        int frameWidth = getContentPane().getWidth();
+        int frameHeight = getContentPane().getHeight();
+        
+        int totalHeight = LOGO_HEIGHT + 5 + BUTTON_HEIGHT; 
+        int startY = (frameHeight - totalHeight) - 300;
+        
+        int logoX = (frameWidth - LOGO_WIDTH) / 2;
+        unoLogo.setBounds(logoX, startY, LOGO_WIDTH, LOGO_HEIGHT);
+        
+        int buttonX = (frameWidth - BUTTON_WIDTH) / 3;
+        int buttonY = startY + LOGO_HEIGHT ; 
+        startButton.setBounds(buttonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
+    }
     
     public static void main(String[] args) {
-        // Enable anti-aliasing for better text rendering
+        // Enable anti-aliasing
         System.setProperty("awt.useSystemAAFontSettings", "on");
         System.setProperty("swing.aatext", "true");
         
+        // Start the application on the EDT
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 StartFrame frame = new StartFrame();
                 frame.setVisible(true);
+                frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
             }
         });
     }

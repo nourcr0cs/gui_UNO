@@ -2,10 +2,9 @@ package frames;
 
 import javax.swing.*;
 
-import components.CirclePanel;
-import components.GameFlowIndicator;
-import components.PlayerLabel;
-import components.UnoBackgroundGrid;
+import components.labels.PlayerLabel;
+import components.panels.CirclePanel;
+import components.panels.GameFlowIndicator;
 
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
@@ -13,7 +12,7 @@ import java.awt.event.ComponentEvent;
 
 public class GameSpaceFrame extends UnoBackgroundGrid {
     
-    //default game flow
+    //default game flow (clock-d)
     private boolean gameDirectionClockwise = true; 
     
     private CirclePanel circlePanel;
@@ -72,33 +71,22 @@ public class GameSpaceFrame extends UnoBackgroundGrid {
    
     private void initializePlayerLabels(int circleX, int circleY, int circlePanelSize) {
         playerLabels = new PlayerLabel[4];
+
+        
         
         playerLabels[0] = new PlayerLabel("You", 0); 
-        playerLabels[1] = new PlayerLabel("Player 2", 1); 
+        playerLabels[1] = new PlayerLabel("nour", 1); 
         playerLabels[2] = new PlayerLabel("Player 3", 2); 
-        playerLabels[3] = new PlayerLabel("Player 4", 3); 
+        playerLabels[3] = new PlayerLabel("meroua", 3); 
+
         
         //set the first player as active initially
         playerLabels[0].setActive(true);
         
         int labelWidth = 100;
-        int labelHeight = 50;
+        int labelHeight = 90;
         
-        int bottomX = (getWidth() - labelWidth) / 2;
-        int bottomY = circleY + circlePanelSize + 10;
-        playerLabels[0].setBounds(bottomX, bottomY, labelWidth, labelHeight);
         
-        int rightX = circleX + circlePanelSize + 10;
-        int rightY = circleY + (circlePanelSize - labelHeight) / 2;
-        playerLabels[1].setBounds(rightX, rightY, labelWidth, labelHeight);
-        
-        int topX = (getWidth() - labelWidth) / 2;
-        int topY = circleY - labelHeight - 10;
-        playerLabels[2].setBounds(topX, topY, labelWidth, labelHeight);
-        
-        int leftX = circleX - labelWidth - 10;
-        int leftY = circleY + (circlePanelSize - labelHeight) / 2;
-        playerLabels[3].setBounds(leftX, leftY, labelWidth, labelHeight);
         
         for (PlayerLabel label : playerLabels) {
             getLayeredPane().add(label, JLayeredPane.MODAL_LAYER);
@@ -108,22 +96,22 @@ public class GameSpaceFrame extends UnoBackgroundGrid {
    
     private void updatePlayerLabelPositions(int circleX, int circleY, int circlePanelWidth, int circlePanelHeight) {
         int labelWidth = 100;
-        int labelHeight = 50;
+        int labelHeight = 90;
         
         int bottomX = (getWidth() - labelWidth) / 2;
-        int bottomY = circleY + circlePanelHeight + 10;
+        int bottomY = circleY + circlePanelHeight - 45;
         playerLabels[0].setBounds(bottomX, bottomY, labelWidth, labelHeight);
         
-        int rightX = circleX + circlePanelWidth + 10;
+        int rightX = circleX + circlePanelWidth - 45;
         int rightY = circleY + (circlePanelHeight - labelHeight) / 2;
         playerLabels[1].setBounds(rightX, rightY, labelWidth, labelHeight);
         
         int topX = (getWidth() - labelWidth) / 2;
-        int topY = circleY - labelHeight - 10;
+        int topY = circleY - labelHeight + 45;
         playerLabels[2].setBounds(topX, topY, labelWidth, labelHeight);
         
-        int leftX = circleX - labelWidth - 10;
-        int leftY = circleY + (circlePanelHeight - labelHeight) / 2;
+        int leftX = circleX - labelWidth + 58;
+        int leftY = circleY + (circlePanelHeight - labelHeight) / 2 - 10;
         playerLabels[3].setBounds(leftX, leftY, labelWidth, labelHeight);
     }
     
@@ -137,7 +125,7 @@ public class GameSpaceFrame extends UnoBackgroundGrid {
             currentPlayerIndex = (currentPlayerIndex + 1) % 4; 
         }
         
-        // Activate new current player
+        //Activate new current player
         playerLabels[currentPlayerIndex].setActive(true);
         
         System.out.println("Current player: " + playerLabels[currentPlayerIndex].getPlayerName());
@@ -185,27 +173,10 @@ public class GameSpaceFrame extends UnoBackgroundGrid {
     public boolean isGameDirectionClockwise() {
         return gameDirectionClockwise;
     }
-    
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             GameSpaceFrame frame = new GameSpaceFrame();
-            
-            JButton reverseButton = new JButton("Play Reverse Card");
-            reverseButton.addActionListener(e -> frame.reverseGameDirection());
-            
-            JButton nextPlayerButton = new JButton("Next Player");
-            nextPlayerButton.addActionListener(e -> frame.moveToNextPlayer());
-            
-            
-            
-            JPanel buttonPanel = new JPanel();
-            buttonPanel.setOpaque(false);
-            buttonPanel.add(reverseButton);
-            buttonPanel.add(nextPlayerButton);
-            buttonPanel.setBounds(0, frame.getHeight() - 80, frame.getWidth(), 50);
-            frame.getLayeredPane().add(buttonPanel, JLayeredPane.DRAG_LAYER);
-            
             frame.setVisible(true);
         });
-    }
-}
+    }}
