@@ -75,8 +75,8 @@ public class GameSpaceFrame extends UnoBackgroundGrid {
         
         
         playerLabels[0] = new PlayerLabel("You", 0); 
-        playerLabels[1] = new PlayerLabel("nour", 1); 
-        playerLabels[2] = new PlayerLabel("Player 3", 2); 
+        playerLabels[1] = new PlayerLabel("imene", 1); 
+        playerLabels[2] = new PlayerLabel("hiba", 2); 
         playerLabels[3] = new PlayerLabel("meroua", 3); 
 
         

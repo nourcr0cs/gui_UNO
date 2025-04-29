@@ -33,19 +33,6 @@ public class UnoWildCardButton extends UnoCardButton {
         return selectedColor;
     }
     
-
-    public void paint(Graphics g) {
-        Graphics2D g2 = (Graphics2D)g.create();
-        int w = getWidth(), h = getHeight();
-        g2.translate(w/2.0, h/2.0);
-        g2.rotate(Math.toRadians(rotation));
-        g2.translate(-w/2.0, -h/2.0);
-
-        super.paint(g2);
-        g2.dispose();
-    }
-
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

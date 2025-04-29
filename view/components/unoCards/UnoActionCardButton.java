@@ -21,18 +21,6 @@ public class UnoActionCardButton extends UnoCardButton {
         return actionType;
     }
     
-    public void paint(Graphics g) {
-
-        Graphics2D g2 = (Graphics2D)g.create();
-        int w = getWidth(), h = getHeight();
-        g2.translate(w/2.0, h/2.0);
-        g2.rotate(Math.toRadians(rotation));
-        g2.translate(-w/2.0, -h/2.0);
-
-        super.paint(g2);
-        g2.dispose();
-    }
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -249,7 +237,6 @@ public class UnoActionCardButton extends UnoCardButton {
         cmp.translate(-width, -height);
     }
     
-
     //for the +2
     private void roundedRect(Graphics2D cmp, int x, int y, int width, int height, int radius) {
         cmp.fillRoundRect(x, y, width, height, radius, radius);

@@ -18,19 +18,6 @@ public class UnoNumberCardButton extends UnoCardButton {
     public int getNumber() {
         return number;
     }
-
-    public void paint(Graphics g) {
-        // 1) apply rotation around center
-        Graphics2D g2 = (Graphics2D)g.create();
-        int w = getWidth(), h = getHeight();
-        g2.translate(w/2.0, h/2.0);
-        g2.rotate(Math.toRadians(rotation));
-        g2.translate(-w/2.0, -h/2.0);
-
-        // 2) paint component, border, children under that transform
-        super.paint(g2);
-        g2.dispose();
-    }
     
     @Override
     protected void paintComponent(Graphics g) {
@@ -56,7 +43,6 @@ public class UnoNumberCardButton extends UnoCardButton {
         int textBaseline = height / 2 + fm.getAscent() / 2;
         cmp.drawString(numberText, textX, textBaseline);
         
-
         // a short line under the digit
         if (number == 6 || number == 9) {
             int lineLength = textWidth / 2;                          
@@ -77,8 +63,6 @@ public class UnoNumberCardButton extends UnoCardButton {
         cmp.rotate(Math.PI);
         cmp.drawString(numberText, width / 12 + 3, height / 6 + 1);
 
-
         cmp.dispose();
     }
-
-    }
+}

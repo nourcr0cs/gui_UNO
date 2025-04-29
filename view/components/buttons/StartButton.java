@@ -26,7 +26,7 @@ public class StartButton extends JButton {
         setFocusPainted(false);
         setContentAreaFilled(false);
         
-        setFont(new Font("Arial", Font.BOLD, 55));
+        setFont(new Font("Comic Sans MS", Font.BOLD, 55));
         setForeground(normalColor);
         
         addMouseListener(new MouseAdapter() {
