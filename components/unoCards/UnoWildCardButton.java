@@ -33,6 +33,19 @@ public class UnoWildCardButton extends UnoCardButton {
         return selectedColor;
     }
     
+
+    public void paint(Graphics g) {
+        Graphics2D g2 = (Graphics2D)g.create();
+        int w = getWidth(), h = getHeight();
+        g2.translate(w/2.0, h/2.0);
+        g2.rotate(Math.toRadians(rotation));
+        g2.translate(-w/2.0, -h/2.0);
+
+        super.paint(g2);
+        g2.dispose();
+    }
+
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -69,17 +82,14 @@ public class UnoWildCardButton extends UnoCardButton {
         cmp.fillArc(centerX - circleRadius, centerY - circleRadius, 
                    colorCircleSize, colorCircleSize, 90, 90);
         
-        // Blue quadrant (top-right)
         cmp.setColor(UnoColor.BLUE.getColor());
         cmp.fillArc(centerX - circleRadius, centerY - circleRadius, 
                    colorCircleSize, colorCircleSize, 0, 90);
         
-        // Yellow quadrant (bottom-left)
         cmp.setColor(UnoColor.YELLOW.getColor());
         cmp.fillArc(centerX - circleRadius, centerY - circleRadius, 
                    colorCircleSize, colorCircleSize, 180, 90);
         
-        // Green quadrant (bottom-right)
         cmp.setColor(UnoColor.GREEN.getColor());
         cmp.fillArc(centerX - circleRadius, centerY - circleRadius, 
                    colorCircleSize, colorCircleSize, 270, 90);
@@ -104,7 +114,7 @@ public class UnoWildCardButton extends UnoCardButton {
         int centerX = width / 2;
         int centerY = height / 2;
         
-        // Card dimensions
+        //card dimensions
         int cardWidth = width / 6;
         int cardHeight = height / 5;
         int spacing = cardWidth / 3;
@@ -130,12 +140,12 @@ public class UnoWildCardButton extends UnoCardButton {
             drawCardWithShadow(cmp, centerX - cardWidth/2, centerY + spacing/2, 
                              cardWidth, cardHeight);
         } else {
-            // Draw single colored card with +4 text
+            //draw single colored card with +4 text
             cmp.setColor(selectedColor.getColor());
             drawCardWithShadow(cmp, centerX - cardWidth/2, centerY - cardHeight/2, 
                              cardWidth, cardHeight);
             
-            // Draw +4 on the card
+            //draw +4 on the card
             cmp.setColor(Color.WHITE);
             Font boldFont = new Font("Arial", Font.BOLD, cardHeight/3);
             cmp.setFont(boldFont);
@@ -145,7 +155,7 @@ public class UnoWildCardButton extends UnoCardButton {
             cmp.drawString(text, centerX - textWidth/2, centerY + fm.getAscent()/2 - fm.getHeight()/4);
         }
         
-        // corners
+        //corners
         cmp.setFont(new Font("Arial", Font.BOLD, height/8));
         cmp.setColor(Color.WHITE);
         cmp.drawString("+4", width/12, height/6);
@@ -175,13 +185,10 @@ public class UnoWildCardButton extends UnoCardButton {
     }
     
     private void drawMiniColorCircle(Graphics2D cmp, int x, int y, int radius) {
-        // Draw the 4-color circle in corner
         
-        // Red quadrant (top-left)
         cmp.setColor(UnoColor.RED.getColor());
         cmp.fillArc(x, y, radius * 2, radius * 2, 90, 90);
         
-        // Blue quadrant (top-right)
         cmp.setColor(UnoColor.BLUE.getColor());
         cmp.fillArc(x, y, radius * 2, radius * 2, 0, 90);
         

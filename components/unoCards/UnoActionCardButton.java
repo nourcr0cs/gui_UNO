@@ -21,12 +21,24 @@ public class UnoActionCardButton extends UnoCardButton {
         return actionType;
     }
     
+    public void paint(Graphics g) {
+
+        Graphics2D g2 = (Graphics2D)g.create();
+        int w = getWidth(), h = getHeight();
+        g2.translate(w/2.0, h/2.0);
+        g2.rotate(Math.toRadians(rotation));
+        g2.translate(-w/2.0, -h/2.0);
+
+        super.paint(g2);
+        g2.dispose();
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         
         if (!isFaceUp) {
-            return; //don't draw if card is face down
+            return; 
         }
         
         Graphics2D cmp = (Graphics2D) g.create();
@@ -79,7 +91,6 @@ public class UnoActionCardButton extends UnoCardButton {
         
         cmp.setClip(originalClip);
         
-        // Draw circle border
         //cmp.setStroke(new BasicStroke(symbolSize/10f));
         cmp.drawOval(centerX - symbolSize/2, centerY - symbolSize/2, symbolSize, symbolSize);
         
@@ -88,7 +99,7 @@ public class UnoActionCardButton extends UnoCardButton {
         
         //top-left corner
         cmp.setColor(Color.WHITE);
-        cmp.fillOval(width/12, height/12, cornerSize, cornerSize);
+        cmp.fillOval(width/12, height/12, cornerSize , cornerSize);
         
         originalClip = cmp.getClip();
         cmp.setClip(new Ellipse2D.Double(width/12, height/12, cornerSize, cornerSize));
@@ -158,7 +169,7 @@ public class UnoActionCardButton extends UnoCardButton {
         cmpRotated.dispose();
         
         //Draw small corner arrows in white (in the same direction as the center)
-        int cornerSize = height / 10;
+        int cornerSize = height / 5;
         
         //Top-left corner arrows (white) - match direction of center
         Graphics2D cmpCorner1 = (Graphics2D) cmp.create();
@@ -170,8 +181,8 @@ public class UnoActionCardButton extends UnoCardButton {
         
         //Bottom-right corner arrows (inverted but same direction)
         Graphics2D cmpCorner2 = (Graphics2D) cmp.create();
-        cmpCorner2.translate(width - width/8, height - height/8);
-        cmpCorner2.rotate(Math.PI / 8 + Math.PI); // Rotate by same angle plus 180 degrees
+        cmpCorner2.translate(width - width/8, height - height/8 );
+        cmpCorner2.rotate(Math.PI / 8 + Math.PI); 
         cmpCorner2.translate(-(width - width/8), -(height - height/8));
         drawSimpleArrows(cmpCorner2, width - width/8 + 3, height - height/8, cornerSize, Color.WHITE);
         cmpCorner2.dispose();
@@ -194,7 +205,7 @@ public class UnoActionCardButton extends UnoCardButton {
         int[] yPoints1 = {y - arrowHeight - arrowHeadSize, y - arrowHeight, y - arrowHeight + arrowHeadSize};
         cmp.drawPolyline(xPoints1, yPoints1, 3);
         
-        // Bottom arrow (pointing left)
+        //Bottom arrow (pointing left)
         cmp.drawLine(x + arrowWidth/2, y + arrowHeight, x - arrowWidth/2 + arrowHeadSize, y + arrowHeight);
         
         int[] xPoints2 = {x - arrowWidth/2 + arrowHeadSize, x - arrowWidth/2, x - arrowWidth/2 + arrowHeadSize};
@@ -228,7 +239,7 @@ public class UnoActionCardButton extends UnoCardButton {
         //draw +2 in top-left corner
         cmp.setFont(new Font("Arial", Font.BOLD, height/8));
         cmp.setColor(Color.WHITE);
-        cmp.drawString("+2", width/12, height/6);
+        cmp.drawString("+2", width/12, height/6 );
         
         //draw +2 in bottom-right corner (inverted)
         cmp.translate(width, height);

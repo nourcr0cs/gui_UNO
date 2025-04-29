@@ -30,7 +30,7 @@ public class UnoCardButton extends JButton {
     }
     
     public UnoCardButton(UnoColor cardColor) {
-        this(cardColor, new Dimension(100, 160)); 
+        this(cardColor, new Dimension(50, 110)); 
     }
     
     public void setFaceUp(boolean faceUp) {
@@ -50,18 +50,35 @@ public class UnoCardButton extends JButton {
     public UnoColor getCardColor() {
         return cardColor;
     }
+
+
+        protected double rotation = 0;
+
+        public void setRotation(double degrees) {
+            this.rotation = degrees;
+            repaint();
+        }
+    
+
+    
+    
+        
     
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D) g.create();
-        
+
+
+    
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
         int width = getWidth();
         int height = getHeight();
+
+
+       g2d.rotate(Math.toRadians(rotation), getWidth()/2.0, getHeight()/2.0);
         
         if (isFaceUp) {
-            // Draw card face
             g2d.setColor(Color.WHITE);
             g2d.fill(new RoundRectangle2D.Double(0, 0, width, height, ARC_WIDTH, ARC_HEIGHT));
 
@@ -69,9 +86,11 @@ public class UnoCardButton extends JButton {
             g2d.fill(new RoundRectangle2D.Double(5, 5, width - 10, height - 10, ARC_WIDTH, ARC_HEIGHT));
             
             g2d.setColor(Color.WHITE);
-            AffineTransform old = g2d.getTransform();
+            
+           AffineTransform old = g2d.getTransform();
+           //g2d.rotate(Math.toRadians(rotation), getWidth()/2.0, getHeight()/2.0);
 
-            // Rotation param
+
             g2d.rotate(Math.toRadians(25), width / 2.0, height / 2.0);
 
             //white oval
@@ -107,13 +126,11 @@ public class UnoCardButton extends JButton {
             double ovalHeight = height * 0.7;
             g2d.fill(new Ellipse2D.Double((width - ovalWidth) / 2, (height - ovalHeight) / 2, ovalWidth, ovalHeight));
 
-            //Restore original transform
             g2d.setTransform(old);
             
             drawUnoLogo(g2d, width, height);
         }
         
-        // Draw border
         g2d.setColor(Color.BLACK);
         g2d.setStroke(new BasicStroke(BORDER_WIDTH));
         g2d.draw(new RoundRectangle2D.Double(BORDER_WIDTH / 2, BORDER_WIDTH / 2, 
@@ -125,15 +142,49 @@ public class UnoCardButton extends JButton {
         // This ensures button state (pressed, etc.) is rendered correctly
         super.paintComponent(g);
     }
+
+
+    /**
+ * Given a point (x,y) in the *unrotated* card’s coordinate system
+ * returns the corresponding location in the panel after rotation.
+ */
+protected Point mapCorner(int x, int y) {
+    int W = getWidth(), H = getHeight();
+    double r = ((rotation % 360) + 360) % 360;
+    switch ((int)r) {
+      case   0: return new Point(    x,     y);
+      case  90: return new Point( W - y,   x);
+      case 180: return new Point( W - x, H - y);
+      case 270: return new Point(   y, H - x);
+      default:  return new Point(    x,     y);
+    }
+}
+
+/** 
+ * Draw a little rotated string so that it stays upright on the card.
+ * @param g the raw Graphics2D
+ * @param text the string to draw
+ * @param px,py the mapped panel coordinates
+ * @param angle the number of degrees to rotate the _text_ (so it reads 
+ *              correctly on the card face). 
+ */
+protected void drawRotatedString(Graphics2D g, String text, int px, int py, double angle) {
+    AffineTransform old = g.getTransform();
+    g.translate(px, py);
+    g.rotate(Math.toRadians(angle));
+    g.drawString(text, 0, 0);
+    g.setTransform(old);
+}
+
+
+    
    
     private void drawUnoLogo(Graphics2D g2d, int width, int height) {
-        // Base font size for UNO text
         int fontSize = height / 6;
         Font unoFont = new Font("Arial Black", Font.BOLD, fontSize);
         
         String unoText = "UNO";
         
-        // Get text dimensions
         FontMetrics fm = g2d.getFontMetrics(unoFont);
         int textWidth = fm.stringWidth(unoText);
         int textHeight = fm.getHeight();
@@ -143,29 +194,29 @@ public class UnoCardButton extends JButton {
         AffineTransform originalTransform = g2d.getTransform();
         g2d.rotate(Math.toRadians(-20), width / 2.0, height / 2.0);
         
-        // First draw the black border/shadow
         g2d.setFont(unoFont);
         
-        // Draw black outline by drawing the text multiple times with small offsets
         g2d.setColor(Color.BLACK);
         for (int offsetX = -3; offsetX <= 3; offsetX++) {
             for (int offsetY = -3; offsetY <= 3; offsetY++) {
-                if (Math.abs(offsetX) > 1 || Math.abs(offsetY) > 1) { // Skip the center
+                if (Math.abs(offsetX) > 1 || Math.abs(offsetY) > 1) { 
                     g2d.drawString(unoText, textX + offsetX, textY + offsetY);
                 }
             }
         }
         
         // Draw the main yellow text
-        g2d.setColor(new Color(255, 215, 0)); // Golden yellow like in the logo
+        g2d.setColor(new Color(255, 215, 0)); 
         g2d.drawString(unoText, textX, textY);
         
-        // Add a subtle highlight
         g2d.setColor(new Color(255, 255, 220, 128));
         g2d.drawString(unoText, textX - 1, textY - 1);
         
         g2d.setTransform(originalTransform);
     }
+
+        
+    
 } 
     
 

@@ -1,4 +1,4 @@
-package components;
+package components.panels;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,7 +12,8 @@ public class CirclePanel extends JPanel {
     
     public CirclePanel() {
     
-        setBackground(BACKGROUND_COLOR);
+        //setBackground(BACKGROUND_COLOR);
+        setOpaque(false);
         setPreferredSize(new Dimension(400, 400));
         setSize(400,400);
     }

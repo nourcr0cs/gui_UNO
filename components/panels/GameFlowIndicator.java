@@ -1,4 +1,4 @@
-package components;
+package components.panels;
 
 import javax.swing.*;
 import java.awt.*;
@@ -46,8 +46,6 @@ public class GameFlowIndicator extends JPanel {
         return clockwise;
     }
     
-
-
 
     @Override
     protected void paintComponent(Graphics g) {
