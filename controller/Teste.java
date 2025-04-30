@@ -344,7 +344,7 @@ new java.util.Timer().schedule(new java.util.TimerTask() {
 
 //package controller;
 
-import model.*;
+import Modell.*;
 import view.frames.GameWithCards;
 
 import javax.swing.*;
