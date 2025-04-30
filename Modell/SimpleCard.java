@@ -3,9 +3,13 @@ package Modell;
 public class SimpleCard extends Card {
 
     private String type = "simple"; // Ajoutez cette ligne
+
+
+
     public SimpleCard(String value, String color) {
-        super(value, color);
+        super(value, color, "simple");
     }
+    
 
     
 
@@ -24,5 +28,23 @@ public class SimpleCard extends Card {
     public String getType() {
         return type;
     }
+
+
+
+
+
+
+
+    // zdtha bch tmdli  numero bch ndirha f controller bch y7tha fcarta s7i7a
+    public int getNumber() {
+        try {
+            return Integer.parseInt(this.getValue());
+        } catch (NumberFormatException e) {
+            return -1; // ou autre valeur spéciale pour indiquer une erreur
+        }
+    }
+    
+
+
 }
 

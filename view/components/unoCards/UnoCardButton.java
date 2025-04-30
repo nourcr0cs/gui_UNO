@@ -19,6 +19,11 @@ public class UnoCardButton extends JButton {
     protected UnoColor cardColor;
     protected boolean isFaceUp;
     private final Dimension cardSize;
+
+
+
+    // bch kol carta nasocieha m3a vrai carte ta3 model
+    private Modell.Card card;
     
     protected double rotation = 0;
 
@@ -194,5 +199,22 @@ public class UnoCardButton extends JButton {
         g2d.drawString(unoText, textX - 1, textY - 1);
         
         g2d.setTransform(originalTransform);
+    }
+
+
+
+
+
+
+
+
+    //  methode pour attacher une carte
+     public void setAssociatedCard(Modell.Card card) {
+    this.card = card;
+      }
+
+    //  methode pour récupérer la carte associée
+     public Modell.Card getAssociatedCard() {
+    return card;
     }
 }

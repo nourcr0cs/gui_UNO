@@ -9,16 +9,24 @@ import view.components.UnoColor;
 
 public class UnoActionCardButton extends UnoCardButton {
     public enum ActionType {
-        SKIP, REVERSE, DRAW_TWO
+        SKIP, REVERSE, DRAW2
     }
 
     private final ActionType actionType;
+    
+
     
     public UnoActionCardButton(UnoColor cardColor, ActionType actionType) {
         super(cardColor);
         this.actionType = actionType;
     }
     
+    
+    
+   /*  public UnoActionCardButton(UnoColor color, ActionType actionType) {
+        super(color, actionType.toString(), "special");
+    }*/
+
     public ActionType getActionType() {
         return actionType;
     }
@@ -45,7 +53,7 @@ public class UnoActionCardButton extends UnoCardButton {
             case REVERSE:
                 drawReverseSymbol(cmp, width, height);
                 break;
-            case DRAW_TWO:
+            case DRAW2:
                 drawDrawTwoSymbol(cmp, width, height);
                 break;
         }

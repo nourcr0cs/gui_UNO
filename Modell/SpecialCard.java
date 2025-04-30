@@ -14,9 +14,19 @@ package Modell;
         }
 
 
-        public SpecialCard(String value, String color) {
+       /*  public SpecialCard(String value, String color) {
             super(value, color);
+        }*/
+
+
+        public SpecialCard(String value, String color) {
+            super(value, color, "special");
         }
+        
+
+        
+        
+
 
         @Override
         
@@ -65,4 +75,14 @@ package Modell;
     }
 return colorCode + "(" + getColor() + ") " + getValue() + ConsoleColors.RESET;
 }
+
+
+
+
+
+
+
+
+
+
     }

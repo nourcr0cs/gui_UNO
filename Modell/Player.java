@@ -11,7 +11,7 @@ public abstract class Player {
     private boolean hasDrawn1Card; // Tracks if the player has drawn a card
 
     // Constructor
-    Player(Player prev, Player next, String name) {
+    public Player(Player prev, Player next, String name) {
         this.prev = prev;
         this.next = next;
         this.name = name;

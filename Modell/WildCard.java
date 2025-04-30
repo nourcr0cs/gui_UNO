@@ -11,9 +11,14 @@ package Modell;
             return type; // Retourne "simple" au lieu d'une variable non définie
         }
        
-        public WildCard(String value) {
+       /*  public WildCard(String value) {
             super(value, "Wild");
         }
+*/
+        public WildCard(String value) {
+            super(value, "Wild", "wild");
+        }
+        
 
     
 
@@ -128,6 +133,12 @@ package Modell;
             game.setColorToPlay(color);
             Thread.sleep(1500);
         }
+
+
+
+
+       
+        
     
         /*public boolean attemptPlayWildDraw4(Player player, String colorToPlay, Game game) throws InterruptedException {
             boolean isSafe = true;

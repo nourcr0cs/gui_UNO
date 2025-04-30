@@ -1,6 +1,4 @@
 package Modell;
-
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -26,6 +24,15 @@ public class Game {
         this.deck = new Deck();
         this.players = new ArrayList<>();
     }
+
+    public Game() {
+        this.pileOfGame = new Stack<>();
+        this.deck = new Deck();
+        this.players = new ArrayList<>();
+    }
+    
+
+
 
     public Deck getDeck() {
         return this.deck;
@@ -63,18 +70,57 @@ public class Game {
         return turnReversed;
     }
 
+    // Modified initPlayers method to automatically set player 1 as "You" (human player)
+    public void initPlayers(List<Player> playerList) {
+        int numberOfPlayers = 0;
+    
+        // Keep asking for the number of players until a valid number (2-4) is entered
+        while (numberOfPlayers < 2 || numberOfPlayers > 4) {
+            System.out.println("Enter the number of players (2-4):");
+            numberOfPlayers = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+    
+            if (numberOfPlayers < 2 || numberOfPlayers > 4) {
+                System.out.println("Invalid number of players. Please enter a number between 2 and 4.");
+            }
+        }
+        
+        // First player is always "You" (human)
+        System.out.println("Enter your name:");
+        String yourName = scanner.nextLine().trim();
+        playerList.add(new Human(null, null, yourName));
+        
+        // Add the remaining players
+        for (int i = 1; i < numberOfPlayers; i++) {
+            System.out.println("Enter the type of player " + (i + 1) + " (Human/Bot):");
+            String type = scanner.nextLine().trim();
+    
+            if (type.equalsIgnoreCase("Human")) {
+                System.out.println("Enter the name of Human player " + (i + 1) + ":");
+                String name = scanner.nextLine().trim();
+                playerList.add(new Human(null, null, name));
+            } else if (type.equalsIgnoreCase("Bot") || type.equalsIgnoreCase("Ai")) {
+                playerList.add(new Bot(null, null, "Bot " + i));
+            } else {
+                System.out.println("Invalid player type. Defaulting to Bot.");
+                playerList.add(new Bot(null, null, "Bot " + i));
+            }
+        }
+    
+        // Link players in a circular manner
+        for (int i = 0; i < playerList.size(); i++) {
+            Player currentPlayer = playerList.get(i);
+            Player prevPlayer = playerList.get((i - 1 + playerList.size()) % playerList.size());
+            Player nextPlayer = playerList.get((i + 1) % playerList.size());
+            currentPlayer.setPrev(prevPlayer);
+            currentPlayer.setNext(nextPlayer);
+        }
+    
+        this.numberPlayer11 = players.size();
+    }
 
-    ///////////////////////
-
-
-
-
-
-
-
-
-
-
+    // Rest of the Game class methods remain unchanged...
+    
     public void startGame() {
         System.out.println("\t\t*********** Let's Play UNO! ***********");
     
@@ -111,210 +157,11 @@ public class Game {
     
             Player currentPlayer = getCurrentPlayer();
 
-            //topDiscardPile.effectCard(currentPlayer, deck, this);
-
             int playableCards = scanPlayableCards(currentPlayer, topDiscardPile, colorToPlay);
     
             System.out.printf("\nCurrent Player in turn: %s\n", currentPlayer.getName());
             displayGameState();
     
-            /*if (playableCards == 0) {
-                System.out.printf("%s currently doesn't have any playable cards. Draws 1 card from the Draw Pile...\n", currentPlayer.getName());
-                drawCards(1, currentPlayer);
-                Card drawnCard = currentPlayer.getHand().peek();
-                currentPlayer.setHasDrawn1Card(true);
-    
-                System.out.print("\nCard drawn: ");
-                printCard(drawnCard);
-    
-                if (drawnCard.isPlayable(topDiscardPile, colorToPlay)) {
-                    // If the drawn card is playable, allow the player to play it
-                    
-                    System.out.println("You drew a playable card! You can choose to play it or skip your turn.");
-                
-                    // Display the player's hand before prompting for input
-                    if (currentPlayer instanceof Human) {
-                        displayPlayerHand(currentPlayer); // Display the player's hand
- 
-
-                      
-
-
-
-                        
-                        System.out.println("Enter the number of the card you want to play (1-" + currentPlayer.getHandSize() + ") or 'skip' to skip your turn:");
-
-                        String input = new Scanner(System.in).nextLine().trim();
-
-                        if (!input.equalsIgnoreCase("skip")) {
-                            try {
-                                int cardIndex = Integer.parseInt(input) - 1;
-                                if (isValidCardIndex(cardIndex, currentPlayer)) {
-                                    Card selectedCard = currentPlayer.getHand().get(cardIndex);
-                                    if (selectedCard.isPlayable(topDiscardPile, colorToPlay)) {
-                                        pileOfGame.push(selectedCard);
-                                        topCard = selectedCard;
-                                        colorToPlay = selectedCard.getColor();
-                                        currentPlayer.removeFromHand(selectedCard);
-
-
-
-
-                                        topCard.effectCard(currentPlayer, deck, this);
-
-
-
-                                    } else {
-                                        System.out.println("Error: That card cannot be played on " + topDiscardPile);
-                                    }
-                                } else {
-                                    System.out.println("Error: Invalid card index.");
-                                }
-                            } catch (NumberFormatException e) {
-                                System.out.println("Error: Please enter a valid number or 'skip'.");
-                            }
-                        }
-                    } else if (currentPlayer instanceof Bot) {
-                        // Bot will always play the drawn card if it's playable
-                        String color=topCard.getColor(); 
-                        Card playedCard = currentPlayer.makeMove(topDiscardPile,color);
-                        
-                        if (playedCard != null) {
-                            pileOfGame.push(playedCard);
-                            topCard = playedCard;
-                            colorToPlay = playedCard.getColor();
-                            currentPlayer.removeFromHand(playedCard);
-                        }
-                    }
-                } else {
-                    // If the drawn card is not playable, skip the player's turn
-                    System.out.println("( Card drawn is not playable. Skipping turn... )");
-                    skip = true; // Set skip flag to true
-                }
-            } 
-            
-            */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            
-            
-            
-            
-/* 
-
-            if (playableCards == 0) {
-                System.out.printf("%s currently doesn't have any playable cards. Draws 1 card from the Draw Pile...\n", currentPlayer.getName());
-                drawCards(1, currentPlayer);
-                Card drawnCard = currentPlayer.getHand().peek(); // Last card added
-            
-                if (drawnCard.isPlayable(topDiscardPile, colorToPlay)) {
-                    System.out.print("\nCard drawn: ");
-                    printCard(drawnCard);
-            
-                    if (currentPlayer instanceof Human) {
-                        displayPlayerHand(currentPlayer);
-                        System.out.println("You drew a playable card! You can choose to play it or skip your turn.");
-                        System.out.println("Enter the number of the card you want to play (1-" + currentPlayer.getHandSize() + ") or 'skip' to skip your turn:");
-            
-                        String input = scanner.nextLine().trim();
-            
-                     /*  if (!input.equalsIgnoreCase("skip")) {
-                            try {
-                                int cardIndex = Integer.parseInt(input) - 1;
-                                if (isValidCardIndex(cardIndex, currentPlayer)) {
-                                    Card selectedCard = currentPlayer.getHand().get(cardIndex);
-                                    if (selectedCard.isPlayable(topDiscardPile, colorToPlay)) {
-                                        pileOfGame.push(selectedCard);
-                                        topCard = selectedCard;
-                                        colorToPlay = selectedCard.getColor();
-                                        currentPlayer.removeFromHand(selectedCard);
-                                        selectedCard.effectCard(currentPlayer, deck, this);
-                                    } else {
-                                        System.out.println("Error: That card cannot be played.");
-                                    }
-                                }
-                            } catch (NumberFormatException e) {
-                                System.out.println("Invalid input.");
-                            }
- }// hadi /* 
-
-
-
-
-
-
-
-
-
-
-
- if (!input.equalsIgnoreCase("skip")) {
-    try {
-        int cardIndex = Integer.parseInt(input) - 1;
-        if (isValidCardIndex(cardIndex, currentPlayer)) {
-            Card selectedCard = currentPlayer.getHand().get(cardIndex);
-            if (selectedCard == drawnCard && selectedCard.isPlayable(topDiscardPile, colorToPlay)) {
-                pileOfGame.push(selectedCard);
-                topCard = selectedCard;
-                colorToPlay = selectedCard.getColor();
-                currentPlayer.removeFromHand(selectedCard);
-                selectedCard.effectCard(currentPlayer, deck, this);
-                currentPlayer.setHasDrawn1Card(false); // Réinitialiser l’état
-                continue; // Passer au joueur suivant
-            } else {
-                System.out.println("Error: You can only play the drawn card or skip.");
-            }
-        }
-    } catch (NumberFormatException e) {
-        System.out.println("Invalid input.");
-    }
-}
-
-            
-                    } else if (currentPlayer instanceof Bot) {
-                        // Bot will always play it if it's playable
-                        System.out.println(currentPlayer.getName() + " plays drawn card: " + drawnCard);
-                        pileOfGame.push(drawnCard);
-                        topCard = drawnCard;
-                        colorToPlay = drawnCard.getColor();
-                        currentPlayer.removeFromHand(drawnCard);
-
-                        drawnCard.effectCard(currentPlayer, deck, this);
-                    }
-            
-                } else {
-                    System.out.print("\nCard drawn: ");
-                    printCard(drawnCard);
-                    System.out.println("( Card drawn is not playable. Skipping turn... )");
-                }
-            
-                currentPlayer.setHasDrawn1Card(false); // Reset draw flag if you use it
-                continue; // Move to next player
-            }
-            
-            */
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
             if (playableCards == 0) {
                 System.out.printf("%s currently doesn't have any playable cards. Draws 1 card from the Draw Pile...\n", currentPlayer.getName());
                 
@@ -370,22 +217,10 @@ public class Game {
                 continue;
             }
             
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
             else {
                 // Existing logic for when the player has playable cards
                 if (currentPlayer instanceof Human) {
-                    //displayPlayerHand(currentPlayer);
+                    displayPlayerHand(currentPlayer);
                     
                 } else if (currentPlayer instanceof Bot) {
                     System.out.println(currentPlayer.getName() + " is thinking...");
@@ -435,35 +270,12 @@ public class Game {
                 }
             }
     
-            /*// Move to the next player
-            if (turnReversed && numberPlayer11 > 1) {
-                if (skip) {
-                    System.out.printf("%s was skipped.\n", currentPlayer.getPrev().getName());
-                    indexOfCurrentPlayer = (indexOfCurrentPlayer - 2 + numberPlayer11) % numberPlayer11;
-                } else {
-                    indexOfCurrentPlayer = (indexOfCurrentPlayer - 1 + numberPlayer11) % numberPlayer11;
-                }
+             // Avancer au joueur suivant, sauf si skipEffect() l'a déjà fait
+            if (!skip) {
+                advanceToNextPlayer(false);
             } else {
-                if (skip) {
-                    System.out.printf("%s was skipped.\n", currentPlayer.getNext().getName());
-                    indexOfCurrentPlayer = (indexOfCurrentPlayer + 2) % numberPlayer11;
-                } else {
-                    indexOfCurrentPlayer = (indexOfCurrentPlayer + 1) % numberPlayer11;
-                }
-            }*/
-
-
-
-
-
-
-             // ✅ Avancer au joueur suivant, sauf si skipEffect() l'a déjà fait
-    if (!skip) {
-        advanceToNextPlayer(false);
-    } else {
-        //skip = false; // reset flag
-        advanceToNextPlayer(true);
-    }
+                advanceToNextPlayer(true);
+            }
     
             // Check if the deck is empty and no player can make a move
             if (deck.isEmpty() && !canAnyPlayerMakeMove()) {
@@ -483,11 +295,6 @@ public class Game {
             System.out.println("Game ended in a draw!");
         }
     }
-
-
-
-
-
     
     // Helper method to check if any player can make a move
     private boolean canAnyPlayerMakeMove() {
@@ -503,54 +310,9 @@ public class Game {
         return index >= 0 && index < player.getHandSize();
     }
 
-
-    public void initPlayers(List<Player> playerList) {
-        int numberOfPlayers = 0;
-    
-        // Keep asking for the number of players until a valid number (2-4) is entered
-        while (numberOfPlayers < 2 || numberOfPlayers > 4) {
-            System.out.println("Enter the number of players (2-4):");
-            numberOfPlayers = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
-    
-            if (numberOfPlayers < 2 || numberOfPlayers > 4) {
-                System.out.println("Invalid number of players. Please enter a number between 2 and 4.");
-            }
-        }
-    
-        for (int i = 0; i < numberOfPlayers; i++) {
-            System.out.println("Enter the type of player " + (i + 1) + " (Human/Ai):");
-            String type = scanner.nextLine().trim();
-    
-            if (type.equalsIgnoreCase("Human")) {
-                System.out.println("Enter the name of Human player " + (i + 1) + ":");
-                String name = scanner.nextLine().trim();
-                playerList.add(new Human(null, null, name));
-            } else if (type.equalsIgnoreCase("Ai")) {
-                playerList.add(new Bot(null, null, "Bot " + (i + 1)));
-            } else {
-                System.out.println("Invalid player type. Defaulting to AI.");
-                playerList.add(new Bot(null, null, "Bot " + (i + 1)));
-            }
-        }
-    
-        // Link players in a circular manner
-        for (int i = 0; i < playerList.size(); i++) {
-            Player currentPlayer = playerList.get(i);
-            Player prevPlayer = playerList.get((i - 1 + playerList.size()) % playerList.size());
-            Player nextPlayer = playerList.get((i + 1) % playerList.size());
-            currentPlayer.setPrev(prevPlayer);
-            currentPlayer.setNext(nextPlayer);
-        }
-    
-        this.numberPlayer11 = players.size();
-    }
-
-        public void shuffleDeck() {
+    public void shuffleDeck() {
         deck.shuffleDeck();
-        }
-
-    
+    }
 
     public void distributeCards() {
         for (Player player : players) {
@@ -570,6 +332,13 @@ public class Game {
     }
 
 
+
+    // hadi zdtha bch nst3mlha f controller 
+    public int getCurrentPlayerIndex() {
+        return indexOfCurrentPlayer; // ou la variable que tu utilises en interne
+    }
+    
+
     public int scanPlayableCards(Player player, Card topDiscardPile, String colorToPlay) {
         int playableCards = 0;
         for (Card card : player.getHand()) {
@@ -577,7 +346,6 @@ public class Game {
         }
         return playableCards;
     }
-
     
     public void drawCards(int quantity, Player player) {
         for (int i = 0; i < quantity; i++) {
@@ -623,53 +391,10 @@ public class Game {
         System.out.println(card);
     }
 
-    /*public void skipEffect(Player player) {
-        int currentIndex = players.indexOf(player);
-        int direction = turnReversed ? -1 : 1;
-        
-        // Skip the next player by advancing the index by 2
-        currentIndex = (currentIndex + 2 * direction) % players.size();
-        player = players.get(currentIndex);
-    }*/
-
-
-
-
-
-
-/* 
     public void skipEffect(Player currentPlayer) {
         int direction = turnReversed ? -1 : 1;
     
-        // Avance de deux positions dans la bonne direction
-        indexOfCurrentPlayer = (players.indexOf(currentPlayer) + 2 * direction + players.size()) % players.size();
-    
-        System.out.printf("%s is skipped!\n", getCurrentPlayer().getName());
-    }*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public void skipEffect(Player currentPlayer) {
-        int direction = turnReversed ? -1 : 1;
-    
-        // Trouver le joueur qui sera sauté AVANT de modifier l’index
+        // Trouver le joueur qui sera sauté AVANT de modifier l'index
         int skippedIndex = (players.indexOf(currentPlayer) + direction + players.size()) % players.size();
         Player skippedPlayer = players.get(skippedIndex);
     
@@ -679,13 +404,7 @@ public class Game {
         System.out.printf("%s is skipped!\n", skippedPlayer.getName()); // ✅ Affichage correct
     }
     
-
-    
-
-
-
     public void draw2Effect(Player player, Deck deck) {
-        
         for (int i = 0; i < 2; i++) {
             player.drawCard(deck, this.getPileOfGame());
         }
@@ -694,14 +413,11 @@ public class Game {
 
     public void reverseEffect() {
         turnReversed = !turnReversed; // Toggle the direction of play
-
         System.out.println("The direction of play has been reversed!");
     }
 
     public void wildEffect(Player player, Deck deck) {
-
         for (int i = 0; i < 4; i++) {
-
             player.drawCard(deck, this.getPileOfGame());
         }
         System.out.println(player.getName() + " has drawn 4 cards!");
@@ -732,31 +448,191 @@ public class Game {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
     public void advanceToNextPlayer(boolean skip) {
         int direction = turnReversed ? -1 : 1;
         int steps = skip ? 2 : 1;
         indexOfCurrentPlayer = (indexOfCurrentPlayer + direction * steps + players.size()) % players.size();
     }
 
-    
-
     public void skipCurrentPlayer(String reason) {
         System.out.println(getCurrentPlayer().getName() + " is skipped! " + reason);
         advanceToNextPlayer(false);
+    }
+
+
+    // bch ngeriha f controller 
+/* 
+    public void jouerCarteDepuisUI(Player player, Card card) {
+        pileOfGame.push(card);
+        setTopCard(card);
+        setColorToPlay(card.getColor());
+        player.removeFromHand(card);
+        card.effectCard(player, deck, this);
+        //checkWinner(player);
+        //advanceToNextPlayer(false);
+    }*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void jouerCarteDepuisUI(Player player, Card card) {
+        player.removeCard(card); // ✅ retirer la carte jouée
+        this.topCard = card;
+        this.colorToPlay = card instanceof WildCard ? card.getColor() : card.getColor();
+        this.pileOfGame.push(card);
+    }
+    
+
+
+    public List<Player> getPlayers() {
+        return this.players;
+    }
+    
+    
+
+
+
+
+    public Player getNextPlayer() {
+        int index = (this.getCurrentPlayerIndex() + 1) % this.getPlayers().size();
+        return this.getPlayers().get(index);
+    }
+    
+
+/* 
+    public void StartGame() {
+    //initPlayers(players);
+    shuffleDeck();
+    distributeCards();
+
+    this.topCard = deck.drawingFromDeck(pileOfGame); // 💥 manquait ici !
+    if (this.topCard == null) {
+        throw new IllegalStateException("Impossible de démarrer : aucune carte disponible !");
+    }
+    pileOfGame.push(topCard);
+    }*/
+
+
+
+
+    public void StartGame() {
+        // Connecter les joueurs entre eux
+        int size = players.size();
+        for (int i = 0; i < size; i++) {
+            Player current = players.get(i);
+            Player next = players.get((i + 1) % size);
+            Player prev = players.get((i - 1 + size) % size);
+            current.setNext(next);
+            current.setPrev(prev);
+        }
+    
+        // Initialiser deck, distribuer les cartes
+        shuffleDeck();
+        distributeCards();
+    
+        // Piocher et définir la carte du dessus
+        this.topCard = deck.drawingFromDeck(pileOfGame);
+        if (this.topCard == null) {
+            throw new IllegalStateException("Erreur : aucune carte n'a pu être tirée.");
+        }
+        pileOfGame.push(topCard);
+    }
+    
+
+
+
+    public static Game createSampleGame(Scanner scanner) {
+        Game game = new Game(scanner);
+        game.addPlayer(new Human("Maroua"));
+        game.addPlayer(new Bot("Bot1"));
+        game.addPlayer(new Bot("Bot2"));
+        game.startGame();
+        return game;
+    }
+
+    
+    public void addPlayer(Player player) {
+        players.add(player);
     }
     
 
 
 
 }
-

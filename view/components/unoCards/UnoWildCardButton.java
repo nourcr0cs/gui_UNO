@@ -8,16 +8,26 @@ import view.components.UnoColor;
 public class UnoWildCardButton extends UnoCardButton {
 
     public enum WildType {
-        WILD, WILD_DRAW_FOUR
+        WILD, DRAW4 
     }
 
     private final WildType wildType;
     private UnoColor selectedColor;
     
     public UnoWildCardButton(WildType wildType) {
-        super(UnoColor.BLACK);
+      /* 
+        //super(UnoColor.BLACK);
+        super(UnoColor.BLACK, wildType.toString(), "wild"); // ✅ C'est bien wildType
         this.wildType = wildType;
         this.selectedColor = null;
+    */
+
+    super(UnoColor.BLACK, new Dimension(80, 120)); // ✅ appel du vrai constructeur
+    this.wildType = wildType;
+    this.selectedColor = null;
+
+    setText(wildType.toString()); // affiche "WILD" ou "PLUS4"
+    setFont(new Font("Arial", Font.BOLD, 16));
     }
     
     public WildType getWildType() {

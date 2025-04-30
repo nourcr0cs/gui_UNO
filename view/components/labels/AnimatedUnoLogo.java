@@ -4,53 +4,46 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.io.File;
 
-public class AnimatedUnoLogo extends JLabel {
+/**
+ * A custom component that displays an animated UNO logo
+ * with floating and pulsing effects
+ */
+public class AnimatedUnoLogo extends JPanel {
     
     private Timer animationTimer;
-    private int originalY;
     private double animationAngle = 0;
-    private int animationAmplitude = 10; 
-    private int animationSpeed = 10;
+    private double scaleAnimation = 0;
+    private int animationAmplitude = 5; // Vertical movement amount
+    private boolean useImage = false;
     private Image logoImage;
     
+    // Logo dimensions
+    private static final int DEFAULT_WIDTH = 150;
+    private static final int DEFAULT_HEIGHT = 100;
+    
+    // Paths to try for the UNO logo image
+    private static final String[] LOGO_PATHS = {
+        "/view/images/uno_logo.png",
+        "/images/uno_logo.png",
+        "/resources/images/uno_logo.png", 
+        "/uno_logo.png",
+        "uno_logo.png",
+        "./view/images/uno_logo.png",
+        "../images/uno_logo.png",
+        "../../images/uno_logo.png"
+    };
+    
     public AnimatedUnoLogo() {
-        // Try multiple approaches to load the UNO logo image
-        try {
-            // Approach 1: Try using class resource (relative to class location)
-            URL imageUrl = getClass().getResource("/view/images/uno-logo.png");
-            
-            // Approach 2: Try looking in the root of the classpath
-            if (imageUrl == null) {
-                imageUrl = getClass().getResource("/menu-icon.png");
-            }
-            
-            // Approach 3: Try looking relative to the current class
-            if (imageUrl == null) {
-                imageUrl = getClass().getResource("menu-icon.png");
-            }
-            
-            // Approach 4: Try checking if file exists directly (for development environments)
-            if (imageUrl == null) {
-                File file = new File("src/components/labels/menu-icon.png");
-                if (file.exists()) {
-                    imageUrl = file.toURI().toURL();
-                }
-            }
-            
-            // If we found the image, load it
-            if (imageUrl != null) {
-                logoImage = new ImageIcon(imageUrl).getImage();
-                System.out.println("Successfully loaded UNO logo from: " + imageUrl);
-            } else {
-                System.err.println("WARNING: Could not find UNO logo image. Make sure menu-icon.png exists in the correct location.");
-            }
-        } catch (Exception e) {
-            System.err.println("Error loading UNO logo image: " + e.getMessage());
-            e.printStackTrace();
-        }
+        setOpaque(false);
+        setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
+        
+        // Try to load the logo image
+        loadLogoImage();
         
         // Set up animation timer
         animationTimer = new Timer(50, new ActionListener() {
@@ -61,21 +54,47 @@ public class AnimatedUnoLogo extends JLabel {
         });
     }
     
-    public void startAnimation() {
-        originalY = getY();
-        animationTimer.start();
+    /**
+     * Attempts to load the UNO logo image from various paths
+     */
+    private void loadLogoImage() {
+        System.out.println("Attempting to load UNO logo for animation...");
+        
+        // Try loading from resources
+        for (String path : LOGO_PATHS) {
+            try {
+                URL imageUrl = getClass().getResource(path);
+                if (imageUrl != null) {
+                    logoImage = new ImageIcon(imageUrl).getImage();
+                    useImage = true;
+                    System.out.println("Successfully loaded UNO logo from resource: " + path);
+                    return;
+                }
+            } catch (Exception e) {
+                System.out.println("Failed to load from resource path: " + path);
+            }
+        }
+        
+        System.out.println("Could not find UNO logo image. Will use dynamic drawing instead.");
     }
     
+   
+    public void startAnimation() {
+        if (!animationTimer.isRunning()) {
+            animationTimer.start();
+            System.out.println("UNO logo animation started");
+        }
+    }
+   
     public void stopAnimation() {
-        animationTimer.stop();
-        setLocation(getX(), originalY);
+        if (animationTimer.isRunning()) {
+            animationTimer.stop();
+        }
     }
     
     private void updateAnimation() {
         animationAngle += 0.1;
-        int newY = originalY + (int)(Math.sin(animationAngle) * animationAmplitude);
-        
-        setLocation(getX(), newY);
+        scaleAnimation = Math.sin(animationAngle / 2) * 0.05 + 1.0; // Scale between 0.95 and 1.05
         repaint();
     }
     
@@ -84,8 +103,8 @@ public class AnimatedUnoLogo extends JLabel {
     }
     
     public void setAnimationSpeed(int speed) {
-        if (speed > 0) {
-            animationTimer.setDelay(150 - speed * 10);
+        if (speed > 0 && speed <= 10) {
+            animationTimer.setDelay(50 - speed * 5);
         }
     }
     
@@ -94,48 +113,80 @@ public class AnimatedUnoLogo extends JLabel {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         
-        if (logoImage != null) {
-            // Calculate the centered position for the image
-            int imageWidth = Math.min(getWidth(), 350);
-            int imageHeight = Math.min(getHeight(), 150);
-            
-            // Draw the image centered
-            int x = (getWidth() - imageWidth) / 2;
-            int y = (getHeight() - imageHeight) / 2;
+        int width = getWidth();
+        int height = getHeight();
+        
+        int yOffset = (int)(Math.sin(animationAngle) * animationAmplitude);
+        
+        AffineTransform originalTransform = g2d.getTransform();
+        AffineTransform transform = new AffineTransform();
+        
+        transform.translate(width / 2, height / 2 + yOffset);
+        transform.scale(scaleAnimation, scaleAnimation);
+        transform.translate(-width / 2, -height / 2);
+        
+        g2d.setTransform(transform);
+        
+        if (useImage && logoImage != null) {
+            int imageWidth = Math.min(width, DEFAULT_WIDTH);
+            int imageHeight = Math.min(height, DEFAULT_HEIGHT);
+            int x = (width - imageWidth) / 2;
+            int y = (height - imageHeight) / 2;
             g2d.drawImage(logoImage, x, y, imageWidth, imageHeight, this);
         } else {
-            // Fallback if image can't be loaded - draw placeholder text with UNO colors
-            g2d.setFont(new Font("Arial", Font.BOLD, 48));
-            g2d.setColor(Color.RED);
-            FontMetrics fm = g2d.getFontMetrics();
-            String text = "UNO";
-            int textWidth = fm.stringWidth(text);
-            int textHeight = fm.getHeight();
-            int x = (getWidth() - textWidth) / 2;
-            int y = (getHeight() - textHeight) / 2 + fm.getAscent();
-            
-            // Draw text with outline
-            g2d.setColor(Color.YELLOW);
-            g2d.fillRoundRect(x-10, y-fm.getAscent(), textWidth+20, textHeight+5, 15, 15);
-            g2d.setColor(Color.BLACK);
-            g2d.drawRoundRect(x-10, y-fm.getAscent(), textWidth+20, textHeight+5, 15, 15);
-            g2d.setColor(Color.RED);
-            g2d.drawString(text, x, y);
+            drawUnoLogo(g2d, width, height);
         }
         
+        g2d.setTransform(originalTransform);
         g2d.dispose();
+    }
+    
+   
+    private void drawUnoLogo(Graphics2D g2d, int width, int height) {
+        // Draw a red oval background
+        int ovalWidth = Math.min(width - 10, DEFAULT_WIDTH - 10);
+        int ovalHeight = Math.min(height - 10, DEFAULT_HEIGHT - 10);
+        int x = (width - ovalWidth) / 2;
+        int y = (height - ovalHeight) / 2;
+        
+        GradientPaint gradient = new GradientPaint(
+            x, y, new Color(255, 50, 50),
+            x, y + ovalHeight, new Color(200, 20, 20)
+        );
+        g2d.setPaint(gradient);
+        g2d.fillOval(x, y, ovalWidth, ovalHeight);
+        
+        g2d.setColor(Color.BLACK);
+        g2d.setStroke(new BasicStroke(2f));
+        g2d.drawOval(x, y, ovalWidth, ovalHeight);
+        
+        int fontSize = Math.min(width, height) / 3;
+        Font logoFont = new Font("Arial", Font.BOLD, fontSize);
+        g2d.setFont(logoFont);
+        
+        // Text measurements
+        FontMetrics fm = g2d.getFontMetrics();
+        String text = "UNO";
+        int textWidth = fm.stringWidth(text);
+        int textX = (width - textWidth) / 2;
+        int textY = (height + fm.getAscent() - fm.getDescent()) / 2;
+        
+        // Draw yellow outline
+        g2d.setColor(Color.YELLOW);
+        g2d.drawString(text, textX-1, textY-1);
+        g2d.drawString(text, textX+1, textY-1);
+        g2d.drawString(text, textX-1, textY+1);
+        g2d.drawString(text, textX+1, textY+1);
+        
+        // Draw black text
+        g2d.setColor(Color.BLACK);
+        g2d.drawString(text, textX, textY);
     }
     
     @Override
     public Dimension getPreferredSize() {
-        if (logoImage != null) {
-            // Set preferred size based on aspect ratio of the image
-            int width = 300; // You can adjust this base width
-            int height = width * logoImage.getHeight(this) / logoImage.getWidth(this);
-            return new Dimension(width, height);
-        } else {
-            return new Dimension(300, 120); // Default size if no image
-        }
+        return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
 }

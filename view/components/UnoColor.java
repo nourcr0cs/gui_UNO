@@ -19,4 +19,21 @@ public enum UnoColor {
     public Color getColor() {
         return color;
     }
+
+
+
+
+
+    // bch n3ref ama couleur bch nmdha lcarta ta3 sa7 
+    public static UnoColor fromString(String colorStr) {
+        return switch (colorStr.toUpperCase()) {
+            case "RED" -> RED;
+            case "BLUE" -> BLUE;
+            case "GREEN" -> GREEN;
+            case "YELLOW" -> YELLOW;
+            case "BLACK" -> BLACK;
+            default -> throw new IllegalArgumentException("Invalid color: " + colorStr);
+        };
+    }
+    
 }

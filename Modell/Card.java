@@ -12,6 +12,13 @@ public abstract class Card {
            
        }
 
+       public Card(String value, String color, String type) {
+        this.value = value;
+        this.color = color;
+        this.type = type;
+    }
+    
+
        public String getValue() {
            return value;
        }
@@ -53,7 +60,7 @@ public abstract class Card {
 
 
        public abstract void effectCard(Player player, Deck deck,Game game);
-       abstract boolean isPlayable(Card topDiscardPile, String colorToPlay);
+       public abstract boolean isPlayable(Card topDiscardPile, String colorToPlay);
 
 
        // to specify the effect of card

@@ -1,12 +1,14 @@
 package Modell;
 
 
+
+
 import java.util.Random;
 
 
 
 // Bot Player class
-class Bot extends Player {
+public class Bot extends Player {
     private final static String[] botNames = {
             "Kevin",
             "Whispy",
@@ -14,9 +16,12 @@ class Bot extends Player {
     };
 
     // Constructor
-    Bot(Player prev, Player next, String name) {
+    public Bot(Player prev, Player next, String name) {
         super(prev, next, name);
     }
+
+
+   
 
     static Bot[] generateBots(int total) {
         Bot[] bots = new Bot[total];
@@ -77,4 +82,19 @@ String chosenColor = colors[new Random().nextInt(colors.length)];
 
 return chosenColor;
 
-}}
+}
+
+
+
+
+// bch ntesti brk 
+public Bot(String name) {
+    super(null, null, name);
+}
+
+
+
+
+
+
+}

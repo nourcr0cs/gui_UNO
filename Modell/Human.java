@@ -1,40 +1,36 @@
 package Modell;
 
 // Human Player class
-
 import java.util.Scanner;
 
-
-
-class Human extends Player {
+public class Human extends Player {
 
     private final Scanner scanner;
 
     // Constructor
-    Human(Player prev, Player next, String name) {
+    /*Human(Player prev, Player next, String name) {
         super(prev, next, name);
         this.scanner = new Scanner(System.in);
-    }
+    }*/
+
+    
+
+public Human(Player next, Player prev, String name) {
+    super(next, prev, name);
+    this.scanner = new Scanner(System.in); // ✅ Initialisation minimale
+}
+
 
     @Override
-    public Card makeMove(Card topCard,String colorToPlay) {
+    public Card makeMove(Card topCard, String colorToPlay) {
         while (true) {
-            
-            
-             System.out.println("\n" + getName() + "'s Turn - Your Hand:");
+            // Display more user-friendly message for the human player
+            System.out.println("\nYour Turn - Your Hand:");
             for (int i = 0; i < getHand().size(); i++) {
                 System.out.println((i + 1) + ": " + getHand().get(i));
             }
             System.out.println("Top card: " + topCard);
             System.out.println("Enter the number of the card you want to play (1-" + getHandSize() + ") or 'draw' to draw a card:");
-
-
-
-
-
-
-
-
 
             String input = getInput();
             if (input.equalsIgnoreCase("draw")) {
@@ -43,14 +39,13 @@ class Human extends Player {
             }
 
             try {
-                int cardIndex = Integer.parseInt(input) - 1; //special card index to avoid duplicate
+                int cardIndex = Integer.parseInt(input) - 1;
                 if (isValidCardIndex(cardIndex)) {
                     Card selectedCard = getHand().get(cardIndex);
                     if (isMoveValid(selectedCard, topCard, colorToPlay)) {
-                        {
                         // The player wants to play this card
                         return selectedCard;
-                         }} else {
+                    } else {
                         System.out.println("Error: That card cannot be played on " + topCard);
                     }
                 } else {
@@ -103,8 +98,21 @@ class Human extends Player {
 
 
 
+// zdto bch ndir test
+
+    public Human(String name) {
+        super(null, null, name);
+        this.scanner = new Scanner(System.in);
+    }
+
+   
+    
+
     
     
     
 }
+
+
+
 
