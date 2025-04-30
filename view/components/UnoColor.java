@@ -1,4 +1,6 @@
-//package components;
+
+package view.components;
+
 import java.awt.Color;
 
 public enum UnoColor {

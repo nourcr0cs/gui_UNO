@@ -1,6 +1,10 @@
-//package components;
+
+package view.components.unoCards;
+
 
 import java.awt.*;
+
+import view.components.UnoColor;
 
 public class UnoNumberCardButton extends UnoCardButton {
     private final int number;
@@ -22,7 +26,7 @@ public class UnoNumberCardButton extends UnoCardButton {
         super.paintComponent(g);
         
         if (!isFaceUp) {
-            return; //no need for any number (baack face)
+            return;
         }
         
         Graphics2D cmp = (Graphics2D) g.create();
@@ -31,26 +35,36 @@ public class UnoNumberCardButton extends UnoCardButton {
         int width = getWidth();
         int height = getHeight();
         
-        // Draw central number
+        //central number
         cmp.setColor(cardColor.getColor());
         cmp.setFont(new Font("Arial", Font.BOLD, height / 4));
         FontMetrics fm = cmp.getFontMetrics();
         String numberText = String.valueOf(number);
         int textWidth = fm.stringWidth(numberText);
-        cmp.drawString(numberText, (width - textWidth) / 2, height / 2 + fm.getAscent() / 2);
+        int textX = (width - textWidth) / 2;
+        int textBaseline = height / 2 + fm.getAscent() / 2;
+        cmp.drawString(numberText, textX, textBaseline);
         
-        // Draw number in top-left corner
-        cmp.setFont(new Font("Arial", Font.BOLD, height/8));
+        // a short line under the digit
+        if (number == 6 || number == 9) {
+            int lineLength = textWidth / 2;                          
+            int lineX = textX + (textWidth - lineLength) / 2;        
+            int lineY = textBaseline + 4;                            
+            
+            Stroke oldStk = cmp.getStroke();
+            cmp.setStroke(new BasicStroke(2));                       
+            cmp.drawLine(lineX, lineY, lineX + lineLength, lineY);   
+            cmp.setStroke(oldStk);
+        }
+        
+        cmp.setFont(new Font("Arial", Font.BOLD, height - 93));
         cmp.setColor(Color.WHITE);
-        cmp.drawString(numberText, width/12, height/6);
+        cmp.drawString(numberText, width / 12 + 3, height / 6 + 4 );
         
-        // Draw number in bottom-right corner (inverted)
         cmp.translate(width, height);
         cmp.rotate(Math.PI);
-        cmp.drawString(numberText, width/12, height/6);
-        cmp.rotate(-Math.PI);
-        cmp.translate(-width, -height);
-        
+        cmp.drawString(numberText, width / 12 + 3, height / 6 + 1);
+
         cmp.dispose();
     }
 }
