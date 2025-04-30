@@ -1,32 +1,33 @@
 package view.frames;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 import view.components.buttons.StartButton;
-import view.components.buttons.ButtonCursor;
+import view.components.buttons.HowToPlayButton;
+import view.components.panels.GlassPanel;
 import view.components.labels.AnimatedUnoLogo;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.io.File;
-import java.io.InputStream;
 import java.net.URL;
 
 public class StartFrame extends JFrame {
     private Image backgroundImage;
-    private AnimatedUnoLogo unoLogo;
     private StartButton startButton;
-    private ButtonCursor buttonCursor;
+    private HowToPlayButton howToPlayButton;
+    private AnimatedUnoLogo animatedLogo;
     
-    private static final int LOGO_WIDTH = 700; 
-    private static final int LOGO_HEIGHT = 2000;
-    private static final int BUTTON_WIDTH = 600; 
-    private static final int BUTTON_HEIGHT = 120; 
-    private static final int CURSOR_WIDTH = 80;
-    private static final int CURSOR_HEIGHT = 80;
+    private static final int CONTAINER_WIDTH = 500;  
+    private static final int CONTAINER_HEIGHT = 400; 
+    private static final int BUTTON_WIDTH = 300; 
+    private static final int BUTTON_HEIGHT = 60;
+    private static final int LOGO_WIDTH = 150;
+    private static final int LOGO_HEIGHT = 100;
     
-    //relative paths to try for the background image
+    
+    private static final int VERTICAL_OFFSET = -150;  
+    
     private static final String[] IMAGE_PATHS = {
         "/view/images/uno_background.jpg",
         "/images/uno_background.jpg",
@@ -41,72 +42,112 @@ public class StartFrame extends JFrame {
     public StartFrame() {
         setTitle("UNO Game");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 600);
+        setSize(1500, 800);
         setLocationRelativeTo(null); 
         setResizable(true);
         
         loadBackgroundImage();
         
-        
         JPanel backgroundPanel = createBackgroundPanel();
         backgroundPanel.setLayout(new BorderLayout());
         
-        //boxLayout
-        JPanel contentPanel = new JPanel();
-        contentPanel.setOpaque(false);
-        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        GlassPanel containerPanel = new GlassPanel(35, 0.7f, new Color(20, 80, 80), true);
+        containerPanel.setPreferredSize(new Dimension(CONTAINER_WIDTH, CONTAINER_HEIGHT));
+        containerPanel.setLayout(new BorderLayout());
         
-        //the uno logo
-        unoLogo = new AnimatedUnoLogo();
-        unoLogo.setAlignmentX(Component.CENTER_ALIGNMENT);
-        unoLogo.setPreferredSize(new Dimension(LOGO_WIDTH, LOGO_HEIGHT));
-        unoLogo.setMaximumSize(new Dimension(LOGO_WIDTH, LOGO_HEIGHT));
-        unoLogo.startAnimation();
+        JPanel logoPanel = new JPanel();
+        logoPanel.setOpaque(false);
+        logoPanel.setLayout(new BorderLayout());
+        logoPanel.setBorder(new EmptyBorder(20, 0, 10, 0)); 
         
-        //start button
-        startButton = new StartButton("Let's Get Started", new StartButton.StartButtonListener() {
+        animatedLogo = new AnimatedUnoLogo();
+        animatedLogo.setPreferredSize(new Dimension(LOGO_WIDTH, LOGO_HEIGHT));
+        animatedLogo.setAnimationAmplitude(3);
+        animatedLogo.setAnimationSpeed(7);    
+        
+        JPanel logoWrapperPanel = new JPanel();
+        logoWrapperPanel.setOpaque(false);
+        logoWrapperPanel.add(animatedLogo);
+        
+        logoPanel.add(logoWrapperPanel, BorderLayout.CENTER);
+        
+        containerPanel.add(logoPanel, BorderLayout.NORTH);
+        
+        JPanel mainContentPanel = new JPanel();
+        mainContentPanel.setOpaque(false);
+        mainContentPanel.setLayout(new BoxLayout(mainContentPanel, BoxLayout.Y_AXIS));
+        mainContentPanel.setBorder(new EmptyBorder(0, 30, 0, 30));
+        
+        //"Let's Get Started" title
+        JLabel titleLabel = new JLabel("Let's Get Started !");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 40));
+        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        mainContentPanel.add(titleLabel);
+        
+        mainContentPanel.add(Box.createRigidArea(new Dimension(0, 40))); 
+        
+        startButton = new StartButton("Play Now", new StartButton.StartButtonListener() {
             @Override
             public void onButtonClicked() {
-                System.out.println("Start button clicked!");
-                //here for the transition to the next page
+                System.out.println("Play Now button clicked!");
+                // Here for the transition to the next page
             }
         });
         startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         startButton.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT));
         startButton.setMaximumSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT));
         
-        //animated cursor pointing to the button
-        buttonCursor = new ButtonCursor();
-        buttonCursor.setAlignmentX(Component.CENTER_ALIGNMENT);
-        buttonCursor.setPreferredSize(new Dimension(CURSOR_WIDTH, CURSOR_HEIGHT));
-        buttonCursor.setMaximumSize(new Dimension(CURSOR_WIDTH, CURSOR_HEIGHT));
-        buttonCursor.startAnimation();
+        mainContentPanel.add(startButton);
         
-        //components to the content panel with proper spacing
-        contentPanel.add(Box.createVerticalGlue()); 
+        containerPanel.add(mainContentPanel, BorderLayout.CENTER);
         
-        contentPanel.add(unoLogo);
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setOpaque(false);
+        bottomPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+        bottomPanel.setBorder(new EmptyBorder(0, 0, 25, 0)); 
         
-        contentPanel.add(Box.createRigidArea(new Dimension(0, -80)));
+        howToPlayButton = new HowToPlayButton(new HowToPlayButton.HowToPlayButtonListener() {
+            @Override
+            public void onButtonClicked() {
+                System.out.println("How to Play button clicked!");
+            }
+        });
         
-        //create a panel for the button and cursor with better alignment
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setOpaque(false);
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, -5, 0));
-        buttonPanel.add(buttonCursor);
-        buttonPanel.add(startButton);
+        bottomPanel.add(howToPlayButton);
         
-        //add button panel to content panel
-        contentPanel.add(buttonPanel);
+        containerPanel.add(bottomPanel, BorderLayout.SOUTH);
         
-        //add more space at the bottom to keep the button higher on screen
-        contentPanel.add(Box.createVerticalGlue());
-        contentPanel.add(Box.createVerticalGlue());
+        JPanel wrapperPanel = new JPanel();
+        wrapperPanel.setOpaque(false);
+        wrapperPanel.setLayout(null); 
         
-        //add the content panel to the center of the background panel
-        backgroundPanel.add(contentPanel, BorderLayout.CENTER);
+        int initialWidth = 1500; 
+        int initialHeight = 800; 
+        
+        int containerX = (initialWidth - CONTAINER_WIDTH) / 2;
+        int containerY = (initialHeight - CONTAINER_HEIGHT) / 2 + VERTICAL_OFFSET;
+        
+        containerPanel.setBounds(containerX, containerY, CONTAINER_WIDTH, CONTAINER_HEIGHT);
+        
+        wrapperPanel.add(containerPanel);
+        
+        backgroundPanel.add(wrapperPanel, BorderLayout.CENTER);
         
         setContentPane(backgroundPanel);
+        
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                int newContainerX = (getWidth() - CONTAINER_WIDTH) / 2;
+                int newContainerY = (getHeight() - CONTAINER_HEIGHT) / 2 + VERTICAL_OFFSET;
+                
+                containerPanel.setBounds(newContainerX, newContainerY, CONTAINER_WIDTH, CONTAINER_HEIGHT);
+            }
+        });
+        
+        SwingUtilities.invokeLater(() -> {
+            animatedLogo.startAnimation();
+        });
     }
    
     private JPanel createBackgroundPanel() {
@@ -117,11 +158,10 @@ public class StartFrame extends JFrame {
                 if (backgroundImage != null) {
                     g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
                 } else {
-                    //fallback gradient if image can't be loaded
                     Graphics2D g2d = (Graphics2D) g;
                     GradientPaint gradient = new GradientPaint(
-                        0, 0, new Color(23, 107, 135), 
-                        getWidth(), getHeight(), new Color(0, 45, 60)
+                        0, 0, new Color(18, 85, 85), 
+                        getWidth(), getHeight(), new Color(10, 45, 45)
                     );
                     g2d.setPaint(gradient);
                     g2d.fillRect(0, 0, getWidth(), getHeight());
@@ -146,48 +186,7 @@ public class StartFrame extends JFrame {
             }
         }
         
-        for (String path : IMAGE_PATHS) {
-            try {
-                URL imageUrl = getClass().getClassLoader().getResource(path);
-                if (imageUrl != null) {
-                    backgroundImage = new ImageIcon(imageUrl).getImage();
-                    System.out.println("Successfully loaded background image from class loader: " + path);
-                    return;
-                }
-            } catch (Exception e) {
-                System.out.println("Failed to load from class loader path: " + path);
-            }
-        }
-        
-        File currentDir = new File(".");
-        System.out.println("Current directory: " + currentDir.getAbsolutePath());
-        
-        String[] filePaths = {
-            "src/main/resources/images/uno_background.jpg",
-            "src/resources/images/uno_background.jpg",
-            "resources/images/uno_background.jpg",
-            "images/uno_background.jpg",
-            "src/main/java/view/images/uno_background.jpg",
-            "src/view/images/uno_background.jpg",
-            "view/images/uno_background.jpg",
-            "uno_background.jpg"
-        };
-        
-        for (String path : filePaths) {
-            try {
-                File file = new File(path);
-                if (file.exists()) {
-                    backgroundImage = new ImageIcon(file.getAbsolutePath()).getImage();
-                    System.out.println("Successfully loaded background image from file: " + file.getAbsolutePath());
-                    return;
-                }
-            } catch (Exception e) {
-                System.out.println("Failed to load from file path: " + path);
-            }
-        }
-        
         System.err.println("Could not find background image after trying multiple paths. Using fallback gradient.");
-        
         createFallbackBackgroundImage();
     }
     
@@ -198,14 +197,11 @@ public class StartFrame extends JFrame {
         Graphics2D g2d = image.createGraphics();
         
         GradientPaint gradient = new GradientPaint(
-            0, 0, new Color(23, 107, 135), 
-            width, height, new Color(0, 45, 60)
+            0, 0, new Color(18, 85, 85), 
+            width, height, new Color(10, 45, 45)
         );
         g2d.setPaint(gradient);
         g2d.fillRect(0, 0, width, height);
-        
-        g2d.setColor(new Color(255, 69, 0, 100)); 
-        g2d.fillOval(width/2 - 200, height/2 - 200, 400, 400);
         
         g2d.dispose();
         backgroundImage = image;

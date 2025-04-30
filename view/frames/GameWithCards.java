@@ -134,7 +134,7 @@ public class GameWithCards extends GameSpaceFrame {
             card.setFaceUp(isFaceUp);
         }
         
-        // Display the cards in the panel
+        //display the cards in the panel
         playerCardPanels[playerIndex].setCards(allPlayerCards[playerIndex]);
     }
     
@@ -144,15 +144,15 @@ public class GameWithCards extends GameSpaceFrame {
     
     public void updateActivePlayer(int playerIndex) {
         if (playerIndex >= 0 && playerIndex < playerCardPanels.length) {
-            // Update active status for all panels
+            //update active status for all panels
             for (int i = 0; i < playerCardPanels.length; i++) {
                 playerCardPanels[i].setActive(i == playerIndex);
             }
             
-            // Set the active player index
+            //set the active player index
             activePlayerIndex = playerIndex;
             
-            // Update the face up/down state for all player cards
+            //update the face up/down state for all player cards
             for (int i = 0; i < playerCardPanels.length; i++) {
                 updatePlayerCardsFacing(i);
             }
@@ -183,7 +183,7 @@ public class GameWithCards extends GameSpaceFrame {
                 cards[i] = new UnoActionCardButton(randomColor, types[actionType]);
                 cards[i].setPreferredSize(smallerCardSize);
             } else {
-                // Wild card
+                //wild card
                 int wildType = (int)(Math.random() * 2);
                 UnoWildCardButton.WildType[] types = UnoWildCardButton.WildType.values();
                 cards[i] = new UnoWildCardButton(types[wildType]);
@@ -201,7 +201,7 @@ public class GameWithCards extends GameSpaceFrame {
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             
             for (int i = 0; i < 4; i++) {
-                int cardCount = 7;
+                int cardCount = 20;
                 frame.setPlayerCards(i, createRandomCards(cardCount));
             }
             
